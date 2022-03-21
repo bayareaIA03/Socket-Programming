@@ -1,0 +1,30 @@
+this is UDP client which will ping the server 10 times and will time each ping and then give out the average time of the entire ping. this is to show how to connect 
+to the server and how long it takes
+
+import socket
+import time
+
+clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server_addr = ('127.0.0.1', 12000)
+clientSocket.settimeout(1)
+list=[0] * 10
+try:
+    for i in range(1, 11):
+        start = time.time()
+        message = 'Ping #' + str(i) 
+        try:
+            sent = clientSocket.sendto(message.encode(), server_addr)
+            print("Sent " + message)
+            data, server = clientSocket.recvfrom(1024)
+            print("Received " + str(data))
+            end = time.time();
+            elapsed = end - start
+            list[i-1] = elapsed
+            print("RTT: " + str(elapsed) + " seconds\n")
+        except socket.timeout:
+            print("#" + str(i) + " Requested Time out\n")
+
+finally:
+    Average = sum(list)/len(list)
+    print('Max is '+str(max(list))+'\nMin is '+ str(max(list))+ '\nAverage is '+str(sum(list)/len(list)))
+    clientSocket.close()
