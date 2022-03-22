@@ -1,0 +1,20 @@
+from socket import *
+
+clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket.connect (('127.0.0.1', 12000))
+
+
+try:
+    print("connection established")
+    while True:
+       fromServer = clientSocket.recv(1024)
+       if fromServer.decode().startswith("Correct"):
+           print(fromServer.decode())
+           break
+           
+       replyToServer = input("From Server: "+ fromServer.decode())
+       clientSocket.send(replyToServer.encode())
+
+finally:
+    print('Closing Client socket')
+    clientSocket.close()
