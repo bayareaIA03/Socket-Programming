@@ -1,0 +1,44 @@
+a guessing number game
+
+# UDPPingerServer.py
+# We will need the following module to generate randomized lost packets
+import random
+from socket import *
+# Create a TCP socket
+# Notice the use of SOCK_STREAM for TCP packets
+serverSocket = socket(AF_INET, SOCK_STREAM)
+# Assign IP address and port number to socket
+serverSocket.bind(('127.0.0.1', 12000))
+serverSocket.listen()
+print("server is ready")
+while True:
+    #new socket is made when connection to client is accepted
+    (connectionSocket, addr) = serverSocket.accept() #idk conn, addr = sock.accept() 
+    print("socket is connected to %s:%s"% (addr[0],addr[1]))
+   
+    clientUsername=("What is your username?")
+    connectionSocket.send(clientUsername.encode())
+    message = connectionSocket.recv(1024).decode()
+  
+    #start game
+    startGame = ("Welcome "+ message+" Type \'n\' and select '\Enter\' to start playing")
+    connectionSocket.send(startGame.encode())
+    
+    # Generate random number in the range of 0 to 10
+    rand = random.randint(0, 3)
+   
+    #decrypts the encryption so that it is readable 
+    message = connectionSocket.recv(1024).decode()
+    while (message == 'n'):
+        guessNow = ('Please Guess A Number Between 1-10')
+        connectionSocket.send(guessNow.encode())
+        message2 = connectionSocket.recv(1024).decode()
+        if rand == int(message2):
+            correctAnswer=("Correct! Good Job")
+            connectionSocket.send(correctAnswer.encode())
+            connectionSocket.close()
+        elif int(message2)< rand:
+            connectionSocket.send("Too Low".encode())
+        else:
+            connectionSocket.send("Too High".encode())
+
